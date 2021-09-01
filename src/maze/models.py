@@ -11,6 +11,13 @@ class Directions:
     SOUTH = 30
     WEST = 40
 
+    CHOICES = (
+        (NORTH, "North"),
+        (EAST, "East"),
+        (SOUTH, "South"),
+        (WEST, "West"),
+    )
+
     meta = {
         NORTH: {
             "step": (0, -1),
@@ -40,7 +47,18 @@ class Cell(models.Model):
     path_east = models.BooleanField(default=False)
     path_west = models.BooleanField(default=False)
 
-    maze = models.ForeignKey("Maze", on_delete=models.CASCADE)
+    maze = models.ForeignKey("Maze", on_delete=models.CASCADE, related_name="cells")
+
+    def can_move(self, direction):
+        attr = "path_{}".format(Directions.meta[direction]["authority"])
+        return getattr(self, attr)
+
+    def reduce_choices(self, choices):
+        reduced_choices = []
+        for direction, label in choices:
+            if not direction or self.can_move(direction):
+                reduced_choices.append((direction, label))
+        return reduced_choices
 
 
 class Maze(models.Model):
@@ -72,3 +90,24 @@ class Maze(models.Model):
         else:
             name = "maze:ajax_maze"
         return reverse(name, kwargs={"maze_id": self.id})
+
+    def get_current_cell(self):
+        return self.cells.get(x=self.current_x, y=self.current_y)
+
+    def can_move(self, direction):
+        cell = self.get_current_cell()
+        return cell.can_move(direction)
+
+    def move(self, direction):
+        dx, dy = Directions.meta[direction]["step"]
+        self.current_x = self.current_x + dx
+        self.current_y = self.current_y + dy
+        self.save()
+
+
+class Step(models.Model):
+    direction = models.IntegerField(choices=Directions.CHOICES)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    maze = models.ForeignKey(Maze, on_delete=models.CASCADE)
+    user = models.ForeignKey("auth.User", on_delete=models.CASCADE)

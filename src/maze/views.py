@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 
 from .models import Maze
+from .forms import StepForm
 
 
 def index(request):
@@ -10,7 +11,17 @@ def index(request):
 
 def maze(request, maze_id, clear=True):
     maze = get_object_or_404(Maze, pk=maze_id)
+
+    if request.method == "POST":
+        form = StepForm(request.POST, maze=maze, user=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(request.path_info)
+    else:
+        form = StepForm(maze=maze, user=request.user)
+
     context = {
+        "form": form,
         "maze": maze,
         "ajax_url": maze.get_ajax_url(clear=clear),
     }
@@ -29,8 +40,7 @@ def ajax_maze(request, maze_id, clear=False):
         "current_y": maze.current_y,
         "cells": [],
     }
-    for cell in maze.cell_set.all().order_by("y", "x"):
-
+    for cell in maze.cells.all().order_by("y", "x"):
         data["cells"].append(
             {
                 "x": cell.x,
