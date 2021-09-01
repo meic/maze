@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
-from django.views.generic import TemplateView
 
 from .models import Maze
 
@@ -9,8 +8,13 @@ def index(request):
     return render(request, "bookmaze/index.html")
 
 
-class MazeView(TemplateView):
-    template_name = "maze.html"
+def maze(request, maze_id, clear=True):
+    maze = get_object_or_404(Maze, pk=maze_id)
+    context = {
+        "maze": maze,
+        "ajax_url": maze.get_ajax_url(clear=clear),
+    }
+    return render(request, "maze/maze.html", context)
 
 
 def ajax_maze(request, maze_id, clear=False):
@@ -21,6 +25,8 @@ def ajax_maze(request, maze_id, clear=False):
     data = {
         "height": maze.height,
         "width": maze.width,
+        "current_x": maze.current_x,
+        "current_y": maze.current_y,
         "cells": [],
     }
     for cell in maze.cell_set.all().order_by("y", "x"):

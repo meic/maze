@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from mazelib import Maze as MazeGenerator
 from mazelib.generate.Prims import Prims
@@ -46,6 +47,9 @@ class Maze(models.Model):
     height = models.IntegerField()
     width = models.IntegerField()
 
+    current_x = models.IntegerField(default=0)
+    current_y = models.IntegerField(default=0)
+
     @classmethod
     def create(cls, width, height):
         maze = cls.objects.create(width=width, height=height)
@@ -60,3 +64,11 @@ class Maze(models.Model):
                     if maze_gen.grid[y * 2 + 1 + dy][x * 2 + 1 + dx] == 0:
                         setattr(cell, "path_{}".format(dir_meta["authority"]), True)
                 cell.save()
+        return maze
+
+    def get_ajax_url(self, clear=False):
+        if clear:
+            name = "maze:ajax_maze_clear"
+        else:
+            name = "maze:ajax_maze"
+        return reverse(name, kwargs={"maze_id": self.id})
