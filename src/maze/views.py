@@ -13,11 +13,13 @@ def maze(request, maze_id, clear=True):
     maze = get_object_or_404(Maze, pk=maze_id)
 
     if request.method == "POST":
+        # TODO permissions check
         form = StepForm(request.POST, maze=maze, user=request.user)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(request.path_info)
     else:
+        # TODO permissions check
         form = StepForm(maze=maze, user=request.user)
 
     context = {
