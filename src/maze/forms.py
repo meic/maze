@@ -11,6 +11,9 @@ class StepForm(forms.ModelForm):
     class Meta:
         model = Step
         fields = ["direction"]
+        widgets = {
+            "direction": forms.RadioSelect(),
+        }
 
     def __init__(self, *args, maze=None, user=None, **kwargs):
         self.maze = maze

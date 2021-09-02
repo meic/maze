@@ -106,7 +106,9 @@ class Maze(models.Model):
 
 
 class Step(models.Model):
-    direction = models.IntegerField(choices=Directions.CHOICES)
+    direction = models.IntegerField(
+        choices=Directions.CHOICES, blank=False, default=None
+    )
     timestamp = models.DateTimeField(auto_now_add=True)
 
     maze = models.ForeignKey(Maze, on_delete=models.CASCADE)
