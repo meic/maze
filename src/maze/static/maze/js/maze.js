@@ -5,72 +5,50 @@ function create_mazes() {
 }
 
 function create_maze(container) {
+    var x_trans = 10;
+    var y_trans = 10;
+
     function draw_maze(data) {
-        var cells = {};
+        var canvas = $("<canvas width=\"500\" height=\"500\">")
+        container.append(canvas);
+        var cell_width = (canvas.width() - (2 * x_trans) )  / data.width
+        var cell_height = (canvas.height() - (2 * y_trans) )  / data.height
+        var ctx = canvas.get(0).getContext('2d');
+        ctx.lineWidth = 6;
+        ctx.lineCap = "square";
+        ctx.beginPath();
+        ctx.translate(x_trans, y_trans);
         $.each(data.cells, function (i, cell) {
-            cells[cell.x + "_" + cell.y] = cell;
-        });
-        var width_p = 100/(data.width + 2);
-        var height_p = 100/(data.height + 2);
-
-        var table = $("<table>")
-        for (let y = -1; y < data.height + 1; y++) {
-            var maze_row = $("<tr>")
-                .addClass("maze-row")
-                .css("height", height_p+"%");
-            for (let x = -1; x < data.width + 1; x++) {
-                cell = cells[x + "_" + y]
-                var cell_div = $("<td>")
-                    .addClass("maze-cell")
-                    .css("width", width_p+"%");
-
-                if (y == -1) {
-                    if ( x != -1 && x !=  data.width) {
-                        cell_div.addClass("maze-border-bottom")
-                    }
-                }
-                if (y == data.height) {
-                    if ( x != -1 && x !=  data.width) {
-                        cell_div.addClass("maze-border-top")
-                    }
-                }
-                if (x == -1) {
-                    if ( y != -1 && y !=  data.height) {
-                        cell_div.addClass("maze-border-right")
-                    }
-                }
-                if (x == data.width) {
-                    if ( y != -1 && y !=  data.height) {
-                        cell_div.addClass("maze-border-left")
-                    }
-                }
-
-                if (typeof cell !== "undefined") {
-                    cell_div
-                        .data("x", cell.x)
-                        .data("y", cell.y);
-                    if (!cell.path_north){
-                        cell_div.addClass("maze-border-top");
-                    }
-                    if (!cell.path_south){
-                        cell_div.addClass("maze-border-bottom");
-                    }
-                    if (!cell.path_east){
-                        cell_div.addClass("maze-border-right");
-                    }
-                    if (!cell.path_west){
-                        cell_div.addClass("maze-border-left");
-                    }
-                    if (cell.x == data.current_x && cell.y == data.current_y) {
-                        cell_div.addClass("current-cell")
-                            .html("<i class=\"fas fa-walking\"></i>");
-                    }
-                }
-                maze_row.append(cell_div);
+            if (!cell.path_north) {
+                ctx.moveTo(cell.x*cell_width, cell.y*cell_height);
+                ctx.lineTo((cell.x+1)*cell_width, cell.y*cell_height);
             }
-            table.append(maze_row);
-        }
-        container.append(table);
+            if (!cell.path_east) {
+                ctx.moveTo((cell.x+1)*cell_width, cell.y*cell_height);
+                ctx.lineTo((cell.x+1)*cell_width, (cell.y + 1)*cell_height);
+            }
+            if (!cell.path_south) {
+                ctx.moveTo(cell.x*cell_width, (cell.y+1)*cell_height);
+                ctx.lineTo((cell.x+1)*cell_width, (cell.y+1)*cell_height);
+
+            }
+            if (!cell.path_west) {
+                ctx.moveTo(cell.x*cell_width, cell.y*cell_height);
+                ctx.lineTo(cell.x*cell_width, (cell.y + 1)*cell_height);
+            }
+            ctx.stroke();
+            ctx.save();
+        });
+
+        // TODO replace with person
+        ctx.beginPath();
+        var x = (data.current_x + 0.5) * cell_width;
+        var y = (data.current_y + 0.5) * cell_height;
+        var radius = cell_width / 4
+
+        ctx.arc(x, y, radius, 0, Math.PI * 2, true)
+        ctx.fillStyle = "red";
+        ctx.fill();
     }
 
     $.ajax({
@@ -79,6 +57,8 @@ function create_maze(container) {
         error: function() {alert("Error loading maze. Please try again.")}
     });
 }
+
+
 
 $(function() {
     create_mazes();
