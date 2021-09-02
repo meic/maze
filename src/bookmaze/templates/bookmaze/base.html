@@ -9,6 +9,7 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link href="{% static 'bookmaze/css/bookmaze.css' %}" rel="stylesheet">
     <link href="{% static 'maze/css/maze.css' %}" rel="stylesheet">
 
     <title>{% block title %}Book Maze{% endblock %}</title>
@@ -22,11 +23,9 @@
           </a>
 
           <ul class="nav nav-pills">
-            <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Home</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Features</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Pricing</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+            {% if not request.user.is_authenticated %}
+              <li class="nav-item"><a href="{% url "login" %}" class="nav-link">Login</a></li>
+            {% endif %}
           </ul>
         </header>
     </div>

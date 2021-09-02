@@ -1,0 +1,26 @@
+.form-login {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+}
+
+.form-login #id_username {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-login #div_id_username.mb-3 {
+    margin-bottom: 0!important;
+}
+
+.form-login #id_password {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.form-login .buttonHolder{
+    text-align: center;
+}
