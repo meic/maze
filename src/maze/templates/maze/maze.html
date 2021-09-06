@@ -8,6 +8,11 @@
 <h2>Maze: {{maze.id}}</h2>
 <div class="maze-container" data-url="{{ajax_url}}"></div>
 
-{% crispy form %}
+{% if form %}
+    {% crispy form %}
+{% endif %}
+{% if not user.is_authenticated %}
+    <p>Please <a href="{% url "login" %}">login</a> to navigate the maze.</p>
+{% endif %}
 
 {% endblock %}
