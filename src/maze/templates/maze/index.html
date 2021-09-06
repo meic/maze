@@ -1,0 +1,12 @@
+{% extends "bookmaze/base.html" %}
+
+{% block title %}Maze x{% endblock %}
+
+{% block content %}
+<h2>Mazes</h2>
+<ul>
+    {% for maze in mazes %}
+        <li><a href="{{ maze.get_absolute_url }}">Maze: {{ maze.id }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

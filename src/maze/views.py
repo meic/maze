@@ -6,7 +6,10 @@ from .forms import StepForm
 
 
 def index(request):
-    return render(request, "bookmaze/index.html")
+    context = {
+        "mazes": Maze.objects.all().order_by("id"),
+    }
+    return render(request, "maze/index.html", context)
 
 
 def maze(request, maze_id, clear=True):

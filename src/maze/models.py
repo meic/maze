@@ -84,6 +84,9 @@ class Maze(models.Model):
                 cell.save()
         return maze
 
+    def get_absolute_url(self):
+        return reverse("maze:maze", kwargs={"maze_id": self.id})
+
     def get_ajax_url(self, clear=False):
         if clear:
             name = "maze:ajax_maze_clear"
