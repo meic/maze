@@ -106,6 +106,9 @@ class Maze(models.Model):
         self.current_x = self.current_x + dx
         self.current_y = self.current_y + dy
         self.save()
+        cell = self.get_current_cell()
+        cell.seen = True
+        cell.save()
 
 
 class Step(models.Model):
