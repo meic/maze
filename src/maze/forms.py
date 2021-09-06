@@ -10,7 +10,7 @@ from .models import Step
 class StepForm(forms.ModelForm):
     class Meta:
         model = Step
-        fields = ["direction"]
+        fields = ["title", "author", "reader", "pages", "direction"]
         widgets = {
             "direction": forms.RadioSelect(),
         }
@@ -19,6 +19,9 @@ class StepForm(forms.ModelForm):
         self.maze = maze
         self.user = user
         super().__init__(*args, **kwargs)
+        self.fields["title"].required = True
+        self.fields["author"].required = True
+        self.fields["reader"].required = True
         self.helper = FormHelper()
         self.helper.form_method = "post"
         self.helper.add_input(Submit("submit", "Move"))

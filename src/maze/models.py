@@ -114,5 +114,10 @@ class Step(models.Model):
     )
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    title = models.CharField(max_length=1000, blank=True)
+    author = models.CharField(max_length=1000, blank=True)
+    reader = models.CharField(max_length=1000, blank=True)
+    pages = models.IntegerField(null=True)
+
     maze = models.ForeignKey(Maze, on_delete=models.CASCADE)
     user = models.ForeignKey("auth.User", on_delete=models.CASCADE)
