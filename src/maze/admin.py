@@ -12,3 +12,8 @@ class MazeAdmin(admin.ModelAdmin):
     inlines = [
         CellInline,
     ]
+
+
+@admin.register(models.Step)
+class StepAdmin(admin.ModelAdmin):
+    pass
