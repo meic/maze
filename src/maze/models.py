@@ -82,6 +82,7 @@ class Maze(models.Model):
                     if maze_gen.grid[y * 2 + 1 + dy][x * 2 + 1 + dx] == 0:
                         setattr(cell, "path_{}".format(dir_meta["authority"]), True)
                 cell.save()
+        # TODO mark first cell as seen
         return maze
 
     def get_absolute_url(self):

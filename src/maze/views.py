@@ -12,7 +12,7 @@ def index(request):
     return render(request, "maze/index.html", context)
 
 
-def maze(request, maze_id, clear=True):
+def maze(request, maze_id, clear=False):
     maze = get_object_or_404(Maze, pk=maze_id)
 
     form = None
@@ -46,16 +46,18 @@ def ajax_maze(request, maze_id, clear=False):
         "current_y": maze.current_y,
         "cells": [],
     }
+    cells = {}
     for cell in maze.cells.all().order_by("y", "x"):
-        data["cells"].append(
-            {
-                "x": cell.x,
-                "y": cell.y,
-                "seen": cell.seen,
-            }
-        )
+        cells[(cell.x, cell.y)] = cell
+
+    for cell in cells.values():
+        cell_data = {
+            "x": cell.x,
+            "y": cell.y,
+            "seen": cell.seen or clear,
+        }
         if cell.seen or clear:
-            data["cells"][-1].update(
+            cell_data.update(
                 {
                     "path_north": cell.path_north,
                     "path_east": cell.path_east,
@@ -63,4 +65,5 @@ def ajax_maze(request, maze_id, clear=False):
                     "path_west": cell.path_west,
                 }
             )
+        data["cells"].append(cell_data)
     return JsonResponse(data)
