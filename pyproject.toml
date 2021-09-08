@@ -13,6 +13,7 @@ notebook = "^6.4.3"
 mazelib = "^0.9.12"
 django-crispy-forms = "^1.12.0"
 crispy-bootstrap5 = "^0.5"
+psycopg2-binary = "^2.9.1"
 
 [tool.poetry.dev-dependencies]
 black = "^21.7b0"
