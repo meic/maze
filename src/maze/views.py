@@ -1,8 +1,20 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse, HttpResponseRedirect
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
 
 from .models import Maze
-from .forms import StepForm
+from .forms import MazeCreateForm, StepForm
+
+
+class MazeCreateView(PermissionRequiredMixin, CreateView):
+    model = Maze
+    form_class = MazeCreateForm
+    success_url = reverse_lazy("maze:index")
+    permission_required = ("maze.add_maze",)
+    template_name = "bookmaze/form_view.html"
+    extra_context = {"title": "Create Maze"}
 
 
 def index(request):

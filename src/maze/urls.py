@@ -6,6 +6,7 @@ app_name = "maze"
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("maze/create/", views.MazeCreateView.as_view(), name="maze_create"),
     path(
         "maze/<slug:maze_id>/clear/",
         views.maze,

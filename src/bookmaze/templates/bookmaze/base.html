@@ -28,7 +28,10 @@
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{ request.user }}
               </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                {% if perms.maze.add_maze %}
+                  <li><a class="dropdown-item" href="{% url "maze:maze_create" %}">Create Maze</a></li>
+                {% endif %}
                 <li><a class="dropdown-item" href="{% url "logout" %}">Logout</a></li>
               </ul>
             </li>

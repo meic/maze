@@ -63,29 +63,29 @@ class Cell(models.Model):
 
 class Maze(models.Model):
     title = models.CharField(max_length=1000, blank=True)
-    height = models.IntegerField()
-    width = models.IntegerField()
+    height = models.IntegerField(default=10)
+    width = models.IntegerField(default=10)
 
     current_x = models.IntegerField(default=0)
     current_y = models.IntegerField(default=0)
 
-    @classmethod
-    def create(cls, width, height):
-        maze = cls.objects.create(width=width, height=height)
+    def __str__(self):
+        return f"{self.id}: {self.title}"
+
+    def generate_cells(self):
         maze_gen = MazeGenerator()
-        maze_gen.generator = Prims(height, width)
+        maze_gen.generator = Prims(self.height, self.width)
         maze_gen.generate()
-        for x in range(maze.width):
-            for y in range(maze.height):
-                cell = Cell(x=x, y=y, maze=maze)
+        for x in range(self.width):
+            for y in range(self.height):
+                cell = Cell(x=x, y=y, maze=self)
                 for dir_meta in Directions.meta.values():
                     dx, dy = dir_meta["step"]
                     if maze_gen.grid[y * 2 + 1 + dy][x * 2 + 1 + dx] == 0:
                         setattr(cell, "path_{}".format(dir_meta["authority"]), True)
-                if cell.x == maze.current_x and cell.y == maze.current_y:
+                if cell.x == self.current_x and cell.y == self.current_y:
                     cell.seen = True
                 cell.save()
-        return maze
 
     def get_absolute_url(self):
         return reverse("maze:maze", kwargs={"maze_id": self.id})
