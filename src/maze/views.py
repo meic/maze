@@ -58,6 +58,7 @@ def ajax_maze(request, maze_id, clear=False):
         "current_y": maze.current_y,
         "end_x": maze.end_x,
         "end_y": maze.end_y,
+        "finished": maze.finished,
         "cells": [],
     }
     cells = {}
@@ -68,9 +69,9 @@ def ajax_maze(request, maze_id, clear=False):
         cell_data = {
             "x": cell.x,
             "y": cell.y,
-            "seen": cell.seen or clear,
+            "seen": cell.seen,
         }
-        if cell.seen or clear:
+        if cell.seen or clear or maze.finished:
             cell_data.update(
                 {
                     "path_north": cell.path_north,

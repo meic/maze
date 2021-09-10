@@ -60,18 +60,17 @@ function create_maze(container) {
                 if (cell.x == data.width - 1) {
                     east_wall(cell);
                 }
-                return true;
             }
-            if (!cell.path_north) {
+            if (cell.path_north === false) {
                 north_wall(cell);
             }
-            if (!cell.path_east) {
+            if (cell.path_east === false) {
                 east_wall(cell);
             }
-            if (!cell.path_south) {
+            if (cell.path_south === false) {
                 south_wall(cell);
             }
-            if (!cell.path_west) {
+            if (cell.path_west === false) {
                 west_wall(cell);
             }
         });
