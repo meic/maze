@@ -69,6 +69,11 @@ class Maze(models.Model):
     current_x = models.IntegerField(default=0)
     current_y = models.IntegerField(default=0)
 
+    end_x = models.IntegerField(default=0)
+    end_y = models.IntegerField(default=0)
+
+    finished = models.BooleanField(default=False)
+
     def __str__(self):
         return f"{self.id}: {self.title}"
 
@@ -86,6 +91,12 @@ class Maze(models.Model):
                 if cell.x == self.current_x and cell.y == self.current_y:
                     cell.seen = True
                 cell.save()
+        self.set_end()
+
+    def set_end(self):
+        self.end_x = self.width - 1
+        self.end_y = self.height - 1
+        self.save()
 
     def get_absolute_url(self):
         return reverse("maze:maze", kwargs={"maze_id": self.id})

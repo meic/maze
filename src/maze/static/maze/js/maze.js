@@ -82,9 +82,17 @@ function create_maze(container) {
         var x = (data.current_x + 0.5) * cell_width;
         var y = (data.current_y + 0.5) * cell_height;
         var radius = cell_width / 4
-
         ctx.arc(x, y, radius, 0, Math.PI * 2, true)
         ctx.fillStyle = "red";
+        ctx.fill();
+
+        // TODO replace with end (book/door)
+        ctx.beginPath();
+        var x = (data.end_x + 0.5) * cell_width;
+        var y = (data.end_y + 0.5) * cell_height;
+        var radius = cell_width / 4
+        ctx.arc(x, y, radius, 0, Math.PI * 2, true)
+        ctx.fillStyle = "purple";
         ctx.fill();
     }
 

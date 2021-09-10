@@ -56,6 +56,8 @@ def ajax_maze(request, maze_id, clear=False):
         "width": maze.width,
         "current_x": maze.current_x,
         "current_y": maze.current_y,
+        "end_x": maze.end_x,
+        "end_y": maze.end_y,
         "cells": [],
     }
     cells = {}
