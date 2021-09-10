@@ -6,6 +6,9 @@
 
 {% block content %}
 <h2>Maze: {{maze.title}}</h2>
+{% if maze.finished %}
+<h3>Congratulation! You have completed the maze!</h3>
+{% endif %}
 <div class="maze-container" data-url="{{ajax_url}}"></div>
 
 {% if form %}

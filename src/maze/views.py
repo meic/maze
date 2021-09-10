@@ -28,7 +28,7 @@ def maze(request, maze_id, clear=False):
     maze = get_object_or_404(Maze, pk=maze_id)
 
     form = None
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not maze.finished:
         # TODO permissions check
         if request.method == "POST":
             form = StepForm(request.POST, maze=maze, user=request.user)

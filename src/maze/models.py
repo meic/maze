@@ -123,6 +123,9 @@ class Maze(models.Model):
         cell = self.get_current_cell()
         cell.seen = True
         cell.save()
+        if cell.x == self.end_x and cell.y == self.end_y:
+            self.finished = True
+            self.save()
 
 
 class Step(models.Model):
