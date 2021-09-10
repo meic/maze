@@ -62,6 +62,7 @@ class Cell(models.Model):
 
 
 class Maze(models.Model):
+    title = models.CharField(max_length=1000, blank=True)
     height = models.IntegerField()
     width = models.IntegerField()
 

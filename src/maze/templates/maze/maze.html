@@ -2,10 +2,10 @@
 
 {% load crispy_forms_tags %}
 
-{% block title %}The Maze Game: {{maze.id}}{% endblock %}
+{% block title %}The Maze Game: {{maze.title}}{% endblock %}
 
 {% block content %}
-<h2>Maze: {{maze.id}}</h2>
+<h2>Maze: {{maze.title}}</h2>
 <div class="maze-container" data-url="{{ajax_url}}"></div>
 
 {% if form %}
