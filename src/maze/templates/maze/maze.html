@@ -12,10 +12,40 @@
 <div class="maze-container" data-url="{{ajax_url}}"></div>
 
 {% if form %}
-    {% crispy form %}
+    <div class="maze-form-container">
+        {% crispy form %}
+    </div>
 {% endif %}
 {% if not user.is_authenticated %}
     <p>Please <a href="{% url "login" %}">login</a> to navigate the maze.</p>
 {% endif %}
+
+<h3>Steps:</h3>
+
+{% for step in step_page %}
+    <div class="maze-step">
+        <p>{{ step.title }} by {{ step.author }} ({{ step.pages }} pages)</p>
+        <p>Read by: {{ step.reader }}</p>
+        <p>Added: {{ step.timestamp }}</p>
+    </div>
+{% endfor %}
+
+<div class="step-pagination">
+    <span class="step-links">
+        {% if step_page.has_previous %}
+            <a href="?page=1">&laquo; First</a>
+            <a href="?page={{ step_page.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ step_page.number }} of {{ step_page.paginator.num_pages }}.
+        </span>
+
+        {% if step_page.has_next %}
+            <a href="?page={{ step_page.next_page_number }}">Next</a>
+            <a href="?page={{ step_page.paginator.num_pages }}">Last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
 
 {% endblock %}

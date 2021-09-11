@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse, HttpResponseRedirect
 from django.views.generic.edit import CreateView
@@ -38,9 +39,15 @@ def maze(request, maze_id, clear=False):
         else:
             form = StepForm(maze=maze, user=request.user)
 
+    all_steps = maze.step_set.all().order_by("-timestamp")
+    step_paginator = Paginator(all_steps, 5)
+    page_number = request.GET.get("page", 1)
+    step_page = step_paginator.page(page_number)
+
     context = {
         "form": form,
         "maze": maze,
+        "step_page": step_page,
         "ajax_url": maze.get_ajax_url(clear=clear),
     }
     return render(request, "maze/maze.html", context)

@@ -1,0 +1,20 @@
+.maze-form-container {
+    margin-bottom: 40px;
+    max-width: 600px;
+}
+
+.maze-step {
+    border: 1px solid rgb(167, 167, 167);
+    border-radius: 5px;
+    margin-bottom: 15px;
+    max-width: 600px;
+    padding: 10px;
+}
+
+.maze-step p {
+    margin-bottom: 5px;
+}
+
+.step-pagination {
+    margin-bottom: 15px;
+}
