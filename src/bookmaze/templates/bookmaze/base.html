@@ -32,6 +32,9 @@
                 {% if perms.maze.add_maze %}
                   <li><a class="dropdown-item" href="{% url "maze:maze_create" %}">Create Maze</a></li>
                 {% endif %}
+                {% if perms.auth.view_user %}
+                  <li><a class="dropdown-item" href="{% url "user_list" %}">Users</a></li>
+                {% endif %}
                 <li><a class="dropdown-item" href="{% url "logout" %}">Logout</a></li>
               </ul>
             </li>
