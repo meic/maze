@@ -29,3 +29,7 @@ class UserListView(PermissionRequiredMixin, ListView):
     permission_required = ("auth.view_user",)
     template_name = "bookmaze/user_list.html"
     model = User
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.exclude(is_superuser=True)
