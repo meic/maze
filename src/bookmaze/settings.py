@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "crispy_forms",
+    "easy_select2",
     "bookmaze",
     "maze",
     "django_extensions",
@@ -121,5 +122,7 @@ LOGIN_REDIRECT_URL = "/"
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+SELECT2_USE_BUNDLED_JQUERY = False
 
 from bookmaze.local_settings import *  # noqa: F401, F403, E402

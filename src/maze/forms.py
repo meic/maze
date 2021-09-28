@@ -1,8 +1,10 @@
 from django import forms
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from easy_select2 import Select2Multiple
 
 from .models import Maze, Step
 
@@ -10,12 +12,17 @@ from .models import Maze, Step
 class MazeCreateForm(forms.ModelForm):
     class Meta:
         model = Maze
-        fields = ["title", "height", "width"]
+        fields = ["title", "height", "width", "users"]
+        widgets = {
+            "users": Select2Multiple(select2attrs={"width": "100%"}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["users"].queryset = User.objects.exclude(is_superuser=True)
         self.fields["title"].required = True
         self.helper = FormHelper()
+        self.helper.include_media = False
         self.helper.form_method = "post"
         self.helper.add_input(Submit("submit", "Create"))
 

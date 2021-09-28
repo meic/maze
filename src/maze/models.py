@@ -73,6 +73,7 @@ class Maze(models.Model):
     end_y = models.IntegerField(default=0)
 
     finished = models.BooleanField(default=False)
+    users = models.ManyToManyField("auth.User")
 
     def __str__(self):
         return f"{self.id}: {self.title}"
