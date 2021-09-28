@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse, HttpResponseRedirect
@@ -26,11 +27,13 @@ def index(request):
 
 
 def maze(request, maze_id, clear=False):
+    if clear:
+        if not request.user.is_superuser:
+            raise PermissionDenied
     maze = get_object_or_404(Maze, pk=maze_id)
 
     form = None
-    if request.user.is_authenticated and not maze.finished:
-        # TODO permissions check
+    if request.user.is_authenticated and maze.user_can_navigate(request.user):
         if request.method == "POST":
             form = StepForm(request.POST, maze=maze, user=request.user)
             if form.is_valid():
@@ -55,8 +58,8 @@ def maze(request, maze_id, clear=False):
 
 def ajax_maze(request, maze_id, clear=False):
     if clear:
-        # TODO permissions check
-        pass
+        if not request.user.is_superuser:
+            raise PermissionDenied
     maze = get_object_or_404(Maze, pk=maze_id)
     data = {
         "height": maze.height,

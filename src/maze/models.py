@@ -128,6 +128,11 @@ class Maze(models.Model):
             self.finished = True
             self.save()
 
+    def user_can_navigate(self, user):
+        if self.finished:
+            return False
+        return self.users.filter(id=user.id).exists()
+
 
 class Step(models.Model):
     direction = models.IntegerField(
