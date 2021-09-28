@@ -1,7 +1,14 @@
 {% extends "bookmaze/base.html" %}
 
 {% block content %}
-<h2>Users</h2>
+<div class='page-header'>
+    {% if perms.auth.add_user %}
+        <div class='btn-toolbar float-end'>
+            <a class="btn btn-primary" href="{% url "user_create" %}" role="button">Add User</a>
+        </div>
+    {% endif %}
+    <h2>Users</h2>
+</div>
 
 <table class="table">
     <thead>
