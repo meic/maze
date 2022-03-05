@@ -99,6 +99,21 @@ class Cell(models.Model):
         return reduced_choices
 
 
+class Task(models.Model):
+    EASY = 10
+    MEDIUM = 20
+    HARD = 30
+
+    DIFFICULTIES = (
+        (EASY, "Easy"),
+        (MEDIUM, "Medium"),
+        (HARD, "Hard"),
+    )
+
+    difficulty = models.IntegerField(choices=DIFFICULTIES, default=EASY)
+    description = models.CharField(max_length=1000)
+
+
 class Maze(models.Model):
     title = models.CharField(max_length=1000, blank=True)
     height = models.IntegerField(default=10)
@@ -109,6 +124,13 @@ class Maze(models.Model):
 
     end_x = models.IntegerField(default=0)
     end_y = models.IntegerField(default=0)
+
+    task_difficulty = models.IntegerField(
+        choices=Task.DIFFICULTIES, null=True, blank=True, default=None
+    )
+    next_task = models.ForeignKey(
+        Task, on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     finished = models.BooleanField(default=False)
     users = models.ManyToManyField("auth.User")
@@ -184,4 +206,5 @@ class Step(models.Model):
     pages = models.IntegerField(null=True)
 
     maze = models.ForeignKey(Maze, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.SET_NULL, null=True, blank=True)
     user = models.ForeignKey("auth.User", on_delete=models.CASCADE)

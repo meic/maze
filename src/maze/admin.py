@@ -17,3 +17,8 @@ class MazeAdmin(admin.ModelAdmin):
 @admin.register(models.Step)
 class StepAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(models.Task)
+class TaskAdmin(admin.ModelAdmin):
+    list_display = ("difficulty", "description")
