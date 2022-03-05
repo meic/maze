@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
@@ -22,20 +23,56 @@ class Directions:
         NORTH: {
             "step": (0, -1),
             "authority": "north",
+            "rule_label": "Title starts with A-M",
         },
         EAST: {
             "step": (1, 0),
             "authority": "east",
+            "rule_label": "Even Number of Pages",
         },
         SOUTH: {
             "step": (0, 1),
             "authority": "south",
+            "rule_label": "Title starts with N-Z",
         },
         WEST: {
             "step": (-1, 0),
             "authority": "west",
+            "rule_label": "Odd Number of pages",
         },
     }
+
+    @classmethod
+    def validate_move_north(cls, cleaned_data):
+        title = cleaned_data["title"]
+        title_start = title[0].lower()
+        if ord(title_start) < ord("a") or ord(title_start) > ord("m"):
+            raise ValidationError(
+                "Title must start with A-M to move North", code="invalid_north"
+            )
+
+    @classmethod
+    def validate_move_south(cls, cleaned_data):
+        title = cleaned_data["title"]
+        title_start = title[0].lower()
+        if ord(title_start) < ord("n") or ord(title_start) > ord("z"):
+            raise ValidationError(
+                "Title must start with N-Z to move South", code="invalid_south"
+            )
+
+    @classmethod
+    def validate_move_east(cls, cleaned_data):
+        pages = cleaned_data["pages"]
+        if pages % 2 != 0:
+            raise ValidationError(
+                "Pages must be even to move East", code="invalid_east"
+            )
+
+    @classmethod
+    def validate_move_west(cls, cleaned_data):
+        pages = cleaned_data["pages"]
+        if pages % 2 != 1:
+            raise ValidationError("Pages must be odd to move West", code="invalid_west")
 
 
 class Cell(models.Model):
@@ -53,11 +90,12 @@ class Cell(models.Model):
         attr = "path_{}".format(Directions.meta[direction]["authority"])
         return getattr(self, attr)
 
-    def reduce_choices(self, choices):
+    def get_direction_choices(self):
         reduced_choices = []
-        for direction, label in choices:
+        for direction, label in Directions.CHOICES:
             if not direction or self.can_move(direction):
-                reduced_choices.append((direction, label))
+                rule = Directions.meta[direction]["rule_label"]
+                reduced_choices.append((direction, f"{label} ({rule})"))
         return reduced_choices
 
 

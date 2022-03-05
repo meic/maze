@@ -6,7 +6,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from easy_select2 import Select2Multiple
 
-from .models import Maze, Step
+from .models import Directions, Maze, Step
 
 
 class MazeCreateForm(forms.ModelForm):
@@ -52,9 +52,14 @@ class StepForm(forms.ModelForm):
         self.helper.form_method = "post"
         self.helper.add_input(Submit("submit", "Move"))
         cell = self.maze.get_current_cell()
-        self.fields["direction"].choices = cell.reduce_choices(
-            self.fields["direction"].choices
-        )
+        self.fields["direction"].choices = cell.get_direction_choices()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        direction = cleaned_data["direction"]
+        direction_authority = Directions.meta[direction]["authority"]
+        if hasattr(Directions, f"validate_move_{direction_authority}"):
+            getattr(Directions, f"validate_move_{direction_authority}")(cleaned_data)
 
     def clean_direction(self):
         direction = self.cleaned_data["direction"]
