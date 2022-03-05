@@ -11,6 +11,12 @@
 {% endif %}
 <div class="maze-container" data-url="{{ajax_url}}"></div>
 
+{% if maze.next_task %}
+<div class="maze-task">
+    <p>Task: {{ maze.next_task.description }}</p>
+</div>
+{% endif %}
+
 {% if form %}
     <div class="maze-form-container">
         {% crispy form %}
@@ -27,6 +33,9 @@
         <p>{{ step.title }} by {{ step.author }} ({{ step.pages }} pages)</p>
         <p>Read by: {{ step.reader }}</p>
         <p>Added: {{ step.timestamp }}</p>
+        {% if step.task %}
+            <p>Task: {{ step.task.description }}</p>
+        {% endif %}
     </div>
 {% endfor %}
 

@@ -1,3 +1,5 @@
+from random import choice as random_choice
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
@@ -113,6 +115,15 @@ class Task(models.Model):
     difficulty = models.IntegerField(choices=DIFFICULTIES, default=EASY)
     description = models.CharField(max_length=1000)
 
+    @classmethod
+    def get_random_task(cls, max_difficulty):
+        pks = cls.objects.filter(difficulty__lte=max_difficulty).values_list(
+            "pk", flat=True
+        )
+        if not pks:
+            return None
+        return cls.objects.get(pk=random_choice(pks))
+
 
 class Maze(models.Model):
     title = models.CharField(max_length=1000, blank=True)
@@ -159,6 +170,12 @@ class Maze(models.Model):
         self.end_y = self.height - 1
         self.save()
 
+    def set_next_task(self):
+        if not self.task_difficulty:
+            return
+        self.next_task = Task.get_random_task(self.task_difficulty)
+        self.save()
+
     def get_absolute_url(self):
         return reverse("maze:maze", kwargs={"maze_id": self.id})
 
@@ -187,6 +204,8 @@ class Maze(models.Model):
         if cell.x == self.end_x and cell.y == self.end_y:
             self.finished = True
             self.save()
+        else:
+            self.set_next_task()
 
     def user_can_navigate(self, user):
         if self.finished:

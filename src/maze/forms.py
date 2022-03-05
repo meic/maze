@@ -12,7 +12,7 @@ from .models import Directions, Maze, Step
 class MazeCreateForm(forms.ModelForm):
     class Meta:
         model = Maze
-        fields = ["title", "height", "width", "users"]
+        fields = ["title", "height", "width", "users", "task_difficulty"]
         widgets = {
             "users": Select2Multiple(select2attrs={"width": "100%"}),
         }
@@ -30,6 +30,7 @@ class MazeCreateForm(forms.ModelForm):
         maze = super().save(commit=commit)
         if commit:
             maze.generate_cells()
+            maze.set_next_task()
         return maze
 
 
@@ -71,6 +72,7 @@ class StepForm(forms.ModelForm):
         step = super().save(commit=False)
         step.maze = self.maze
         step.user = self.user
+        step.task = self.maze.next_task
         if commit:
             step.save()
         self.maze.move(step.direction)
