@@ -1,3 +1,5 @@
+from itertools import zip_longest
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -20,8 +22,16 @@ class MazeCreateView(PermissionRequiredMixin, CreateView):
 
 
 def index(request):
+    mazes = Maze.objects.all().order_by("id")
+    user_mazes = []
+    show_user_mazes = False
+    if request.user.is_authenticated:
+        user_mazes = Maze.objects.filter(users=request.user).order_by("id")
+        show_user_mazes = user_mazes.exists()
     context = {
-        "mazes": Maze.objects.all().order_by("id"),
+        "maze_rows": zip_longest(*[iter(mazes)] * 3),
+        "show_user_mazes": show_user_mazes,
+        "user_maze_rows": zip_longest(*[iter(user_mazes)] * 3),
     }
     return render(request, "maze/index.html", context)
 

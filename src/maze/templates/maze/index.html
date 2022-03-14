@@ -1,10 +1,14 @@
 {% extends "bookmaze/base.html" %}
 
 {% block content %}
-<h2>Mazes</h2>
-<ul>
-    {% for maze in mazes %}
-        <li><a href="{{ maze.get_absolute_url }}">{{ maze.title }}</a></li>
-    {% endfor %}
-</ul>
+
+{% if show_user_mazes %}
+<h2>My Mazes</h2>
+{% include "maze/maze_list.html" with maze_rows=user_maze_rows %}
+{% endif %}
+
+<div class="mb-5"></div>
+
+<h2>All Mazes</h2>
+{% include "maze/maze_list.html" with maze_rows=maze_rows %}
 {% endblock %}

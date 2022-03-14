@@ -18,3 +18,18 @@
 .step-pagination {
     margin-bottom: 15px;
 }
+
+.maze-list .maze-title {
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.maze-list a{
+    color: black;
+    text-decoration-line: none;
+}
+
+.maze-list canvas {
+    margin: auto;
+    display: block;
+}

@@ -22,7 +22,11 @@ function create_maze(container) {
     var y_trans = 10;
 
     function draw_maze(data) {
-        var canvas = $("<canvas width=\"500\" height=\"500\">")
+        var canvas_size = 500;
+        if (container.hasClass("maze-small")) {
+            canvas_size = 300;
+        }
+        var canvas = $("<canvas width=\"" + canvas_size + "\" height=\"" + canvas_size + "\">")
         container.append(canvas);
         var cell_width = (canvas.width() - (2 * x_trans) )  / data.width
         var cell_height = (canvas.height() - (2 * y_trans) )  / data.height

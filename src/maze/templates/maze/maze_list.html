@@ -1,0 +1,21 @@
+<div class="maze-list">
+    {% for row in maze_rows %}
+        <div class="row mb-4">
+            {% for maze in row %}
+                {% if maze %}
+                    <div class="col-lg-4">
+                        <a href="{{ maze.get_absolute_url }}">
+                            <h4 class="maze-title">
+                                {{ maze.title }}
+                            </h4>
+                            <div
+                                class="maze-container maze-small"
+                                data-url="{{ maze.get_ajax_url }}"
+                            ></div>
+                        </a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
