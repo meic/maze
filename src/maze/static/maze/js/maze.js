@@ -38,7 +38,9 @@ function create_maze(container) {
         $.each(data.cells, function (i, cell) {
             if (!cell.seen) {
                 ctx.fillStyle = 'grey';
-                ctx.fillRect(cell.x*cell_width, cell.y*cell_height, cell_width, cell_height);
+                // Square is 1px larger in all directions to avoid pixel interpolation when with of
+                // maze is not a integer multiple of the width or height
+                ctx.fillRect(cell.x*cell_width-1, cell.y*cell_height-1, cell_width+2, cell_height+2);
             }
         });
 
