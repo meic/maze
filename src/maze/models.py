@@ -206,9 +206,10 @@ class Maze(models.Model):
         cell.save()
         if cell.x == self.end_x and cell.y == self.end_y:
             self.finished = True
-            self.save()
         else:
             self.set_next_task()
+        self.last_updated = timezone.now()
+        self.save()
 
     def user_can_navigate(self, user):
         if self.finished:
