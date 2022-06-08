@@ -42,4 +42,23 @@
 </div>
 
 {% include "maze/maze_list.html" with maze_rows=maze_rows %}
+
+<div class="pagination">
+    <span class="pagination-links">
+        {% if all_maze_page.has_previous %}
+            <a href="{{all_maze_page.links.first}}">&laquo; First</a>
+            <a href="{{all_maze_page.links.previous_page}}">Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ all_maze_page.number }} of {{ all_maze_page.paginator.num_pages }}.
+        </span>
+
+        {% if all_maze_page.has_next %}
+            <a href="{{all_maze_page.links.next_page}}">Next</a>
+            <a href="{{all_maze_page.links.last_page}}">Last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
 {% endblock %}

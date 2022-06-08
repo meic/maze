@@ -2,7 +2,7 @@ from itertools import zip_longest
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse, HttpResponseRedirect
 from django.views.generic.edit import CreateView
@@ -21,14 +21,49 @@ class MazeCreateView(PermissionRequiredMixin, CreateView):
     extra_context = {"title": "Create Maze"}
 
 
+def create_pagination_params(page, params):
+    new_params = dict(params)
+    new_params["page"] = page
+    return "?" + "&".join(f"{key}={value}" for key, value in new_params.items())
+
+
+def add_pagination_links(page, current_params=None):
+    if current_params is None:
+        current_params = {}
+
+    page.links = {
+        "first": create_pagination_params(1, current_params),
+        "last_page": create_pagination_params(page.paginator.num_pages, current_params),
+    }
+    try:
+        page.links["previous_page"] = create_pagination_params(
+            page.previous_page_number(), current_params
+        )
+    except EmptyPage:
+        pass
+    try:
+        page.links["next_page"] = create_pagination_params(
+            page.next_page_number(), current_params
+        )
+    except EmptyPage:
+        pass
+
+
 def index(request):
     mazes = Maze.objects.all()
 
+    current_params = {}
     search_term = request.GET.get("search")
     if search_term:
         mazes = mazes.filter(title__icontains=search_term)
+        current_params["search"] = search_term
 
     mazes = mazes.order_by("-last_updated")
+
+    maze_paginator = Paginator(mazes, 15)
+    page_number = request.GET.get("page", 1)
+    all_maze_page = maze_paginator.page(page_number)
+    add_pagination_links(all_maze_page, current_params=current_params)
 
     user_mazes = []
     show_user_mazes = False
@@ -36,10 +71,11 @@ def index(request):
         user_mazes = Maze.objects.filter(users=request.user).order_by("id")
         show_user_mazes = user_mazes.exists()
     context = {
-        "maze_rows": zip_longest(*[iter(mazes)] * 3),
+        "maze_rows": zip_longest(*[iter(all_maze_page)] * 3),
         "show_user_mazes": show_user_mazes,
         "user_maze_rows": zip_longest(*[iter(user_mazes)] * 3),
         "search_term": search_term,
+        "all_maze_page": all_maze_page,
     }
     return render(request, "maze/index.html", context)
 
