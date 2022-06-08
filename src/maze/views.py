@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, EmptyPage
 from django.shortcuts import get_object_or_404, render
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import Http404, JsonResponse, HttpResponseRedirect
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 
@@ -62,7 +62,10 @@ def index(request):
 
     maze_paginator = Paginator(mazes, 15)
     page_number = request.GET.get("page", 1)
-    all_maze_page = maze_paginator.page(page_number)
+    try:
+        all_maze_page = maze_paginator.page(page_number)
+    except EmptyPage:
+        raise Http404
     add_pagination_links(all_maze_page, current_params=current_params)
 
     user_mazes = []
