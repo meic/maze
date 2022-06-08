@@ -33,3 +33,7 @@
     margin: auto;
     display: block;
 }
+
+.maze-complete {
+    color: green;
+}

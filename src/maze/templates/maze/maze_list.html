@@ -5,8 +5,11 @@
                 {% if maze %}
                     <div class="col-lg-4">
                         <a href="{{ maze.get_absolute_url }}">
-                            <h4 class="maze-title">
+                            <h4 class="maze-title {% if maze.finished %}maze-complete{% endif %}">
                                 {{ maze.title }}
+                                {% if maze.finished %}
+                                    <i class="bi bi-emoji-sunglasses"></i>
+                                {% endif %}
                             </h4>
                             <div
                                 class="maze-container maze-small"
