@@ -22,7 +22,14 @@ class MazeCreateView(PermissionRequiredMixin, CreateView):
 
 
 def index(request):
-    mazes = Maze.objects.all().order_by("-last_updated")
+    mazes = Maze.objects.all()
+
+    search_term = request.GET.get("search")
+    if search_term:
+        mazes = mazes.filter(title__icontains=search_term)
+
+    mazes = mazes.order_by("-last_updated")
+
     user_mazes = []
     show_user_mazes = False
     if request.user.is_authenticated:
@@ -32,6 +39,7 @@ def index(request):
         "maze_rows": zip_longest(*[iter(mazes)] * 3),
         "show_user_mazes": show_user_mazes,
         "user_maze_rows": zip_longest(*[iter(user_mazes)] * 3),
+        "search_term": search_term,
     }
     return render(request, "maze/index.html", context)
 

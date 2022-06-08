@@ -10,5 +10,36 @@
 <div class="mb-5"></div>
 
 <h2>All Mazes</h2>
+
+<div class="row mb-4">
+    <div class="col-lg-4"></div>
+    <div class="col-lg-4">
+        <form method="get">
+            <div class="input-group">
+                <input
+                    id="search"
+                    name="search"
+                    type="text"
+                    class="form-control"
+                    placeholder="Search"
+                    aria-label="Search"
+                    aria-describedby="button-search"
+                    {% if search_term %}
+                        value="{{ search_term }}"
+                    {% endif %}
+                >
+                <button
+                    class="btn btn-outline-secondary"
+                    type="submit"
+                    id="button-search"
+                >
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-4"></div>
+</div>
+
 {% include "maze/maze_list.html" with maze_rows=maze_rows %}
 {% endblock %}
