@@ -22,7 +22,7 @@ class MazeCreateView(PermissionRequiredMixin, CreateView):
 
 
 def index(request):
-    mazes = Maze.objects.all().order_by("id")
+    mazes = Maze.objects.all().order_by("-last_updated")
     user_mazes = []
     show_user_mazes = False
     if request.user.is_authenticated:

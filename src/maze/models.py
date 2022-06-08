@@ -3,6 +3,7 @@ from random import choice as random_choice
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 from mazelib import Maze as MazeGenerator
 from mazelib.generate.Prims import Prims
@@ -143,6 +144,7 @@ class Maze(models.Model):
         Task, on_delete=models.SET_NULL, null=True, blank=True
     )
 
+    last_updated = models.DateTimeField(null=True, db_index=True)
     finished = models.BooleanField(default=False)
     users = models.ManyToManyField("auth.User")
 
@@ -164,11 +166,12 @@ class Maze(models.Model):
                     cell.seen = True
                 cell.save()
         self.set_end()
+        self.last_updated = timezone.now()
+        self.save()
 
     def set_end(self):
         self.end_x = self.width - 1
         self.end_y = self.height - 1
-        self.save()
 
     def set_next_task(self):
         if not self.task_difficulty:
