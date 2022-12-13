@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "easy_select2",
     "bookmaze",
+    "accounts",
     "maze",
     "django_extensions",
     "crispy_bootstrap5",
