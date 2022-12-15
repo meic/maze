@@ -1,15 +1,15 @@
 from itertools import zip_longest
 
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, EmptyPage
 from django.shortcuts import get_object_or_404, render
 from django.http import Http404, JsonResponse, HttpResponseRedirect
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, FormView
 from django.urls import reverse_lazy
 
 from .models import Maze
-from .forms import MazeCreateForm, StepForm
+from .forms import MazeCreateForm, MyMazeCreateForm, StepForm
 
 
 class MazeCreateView(PermissionRequiredMixin, CreateView):
@@ -19,6 +19,19 @@ class MazeCreateView(PermissionRequiredMixin, CreateView):
     permission_required = ("maze.add_maze",)
     template_name = "bookmaze/form_view.html"
     extra_context = {"title": "Create Maze"}
+
+
+class MyMazeCreateView(LoginRequiredMixin, FormView):
+    template_name = "bookmaze/form_view.html"
+    form_class = MyMazeCreateForm
+    success_url = reverse_lazy("maze:index")
+    extra_context = {"title": "Create Maze"}
+
+    def form_valid(self, form):
+        if not Maze.can_create_own_maze(self.request.user):
+            raise PermissionDenied
+        form.save(self.request.user)
+        return super().form_valid(form)
 
 
 def create_pagination_params(page, params):
@@ -70,10 +83,13 @@ def index(request):
 
     user_mazes = []
     show_user_mazes = False
+    can_create_maze = False
     if request.user.is_authenticated:
-        user_mazes = Maze.objects.filter(users=request.user).order_by("id")
+        user_mazes = Maze.objects.filter(users=request.user).order_by("-last_updated")
         show_user_mazes = user_mazes.exists()
+        can_create_maze = Maze.can_create_own_maze(request.user)
     context = {
+        "can_create_maze": can_create_maze,
         "maze_rows": zip_longest(*[iter(all_maze_page)] * 3),
         "show_user_mazes": show_user_mazes,
         "user_maze_rows": zip_longest(*[iter(user_mazes)] * 3),

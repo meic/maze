@@ -6,7 +6,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from easy_select2 import Select2Multiple
 
-from .models import Directions, Maze, Step
+from .models import Directions, Maze, Step, Task
 
 
 class MazeCreateForm(forms.ModelForm):
@@ -29,6 +29,32 @@ class MazeCreateForm(forms.ModelForm):
     def save(self, commit=True):
         maze = super().save(commit=commit)
         if commit:
+            maze.generate_cells()
+            maze.set_next_task()
+        return maze
+
+
+class MyMazeCreateForm(forms.Form):
+    size = forms.IntegerField(required=True, min_value=5, max_value=15, initial=10)
+    task_difficulity = forms.ChoiceField(choices=Task.DIFFICULTIES)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.include_media = False
+        self.helper.form_method = "post"
+        self.helper.add_input(Submit("submit", "Create"))
+
+    def save(self, user, commit=True):
+        maze = Maze(
+            title=user.username,
+            height=self.cleaned_data["size"],
+            width=self.cleaned_data["size"],
+            task_difficulty=self.cleaned_data["task_difficulity"],
+        )
+        if commit:
+            maze.save()
+            maze.users.add(user)
             maze.generate_cells()
             maze.set_next_task()
         return maze

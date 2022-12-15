@@ -8,6 +8,7 @@ class CreateAccountView(FormView):
     template_name = "bookmaze/form_view.html"
     form_class = CreateAccountForm
     success_url = reverse_lazy("maze:index")
+    extra_context = {"title": "Create Account"}
 
     def form_valid(self, form):
         form.create_user(self.request)

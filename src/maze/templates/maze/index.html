@@ -2,14 +2,29 @@
 
 {% block content %}
 
+{% if can_create_maze %}
+    <div class="row mb-3">
+        <div class="col text-center">
+        <a class="btn btn-primary" href="{% url "maze:my_maze_create" %}">Create a maze</a>
+        </div>
+    </div>
+{% endif %}
 {% if show_user_mazes %}
-<h2>My Mazes</h2>
+    <div class="row mb-3">
+        <div class="col text-center">
+        <h2>My Mazes</h2>
+        </div>
+    </div>
 {% include "maze/maze_list.html" with maze_rows=user_maze_rows %}
 {% endif %}
 
 <div class="mb-5"></div>
 
-<h2>All Mazes</h2>
+<div class="row mb-3">
+    <div class="col text-center">
+      <h2>All Mazes</h2>
+    </div>
+</div>
 
 <div class="row mb-4">
     <div class="col-lg-4"></div>
