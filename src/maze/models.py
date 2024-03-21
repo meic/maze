@@ -78,6 +78,13 @@ class Directions:
             raise ValidationError("Pages must be odd to move West", code="invalid_west")
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Cell(models.Model):
     x = models.IntegerField()
     y = models.IntegerField()
@@ -116,6 +123,9 @@ class Task(models.Model):
     difficulty = models.IntegerField(choices=DIFFICULTIES, default=EASY)
     description = models.CharField(max_length=1000)
     archived = models.BooleanField(default=False)
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     @classmethod
     def get_random_task(cls, max_difficulty):
@@ -140,6 +150,9 @@ class Maze(models.Model):
 
     task_difficulty = models.IntegerField(
         choices=Task.DIFFICULTIES, null=True, blank=True, default=None
+    )
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True, blank=True
     )
     next_task = models.ForeignKey(
         Task, on_delete=models.SET_NULL, null=True, blank=True
