@@ -115,12 +115,13 @@ class Task(models.Model):
 
     difficulty = models.IntegerField(choices=DIFFICULTIES, default=EASY)
     description = models.CharField(max_length=1000)
+    archived = models.BooleanField(default=False)
 
     @classmethod
     def get_random_task(cls, max_difficulty):
-        pks = cls.objects.filter(difficulty__lte=max_difficulty).values_list(
-            "pk", flat=True
-        )
+        pks = cls.objects.filter(
+            difficulty__lte=max_difficulty, archived=False
+        ).values_list("pk", flat=True)
         if not pks:
             return None
         return cls.objects.get(pk=random_choice(pks))
