@@ -6,13 +6,13 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from easy_select2 import Select2Multiple
 
-from .models import Directions, Maze, Step, Task
+from .models import Category, Directions, Maze, Step, Task
 
 
 class MazeCreateForm(forms.ModelForm):
     class Meta:
         model = Maze
-        fields = ["title", "height", "width", "users", "task_difficulty"]
+        fields = ["title", "height", "width", "users", "task_difficulty", "category"]
         widgets = {
             "users": Select2Multiple(select2attrs={"width": "100%"}),
         }
@@ -20,7 +20,8 @@ class MazeCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["users"].queryset = User.objects.exclude(is_superuser=True)
-        self.fields["title"].required = True
+        for field in ("title", "task_difficulty", "category"):
+            self.fields[field].required = True
         self.helper = FormHelper()
         self.helper.include_media = False
         self.helper.form_method = "post"
@@ -37,6 +38,7 @@ class MazeCreateForm(forms.ModelForm):
 class MyMazeCreateForm(forms.Form):
     size = forms.IntegerField(required=True, min_value=5, max_value=15, initial=10)
     task_difficulity = forms.ChoiceField(choices=Task.DIFFICULTIES)
+    category = forms.ModelChoiceField(queryset=Category.objects)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -51,6 +53,7 @@ class MyMazeCreateForm(forms.Form):
             height=self.cleaned_data["size"],
             width=self.cleaned_data["size"],
             task_difficulty=self.cleaned_data["task_difficulity"],
+            category=self.cleaned_data["category"],
         )
         if commit:
             maze.save()
