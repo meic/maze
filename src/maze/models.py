@@ -84,6 +84,13 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def get_random_task(self, max_difficulty):
+        tasks = self.tasks.filter(difficulty__lte=max_difficulty, archived=False)
+        pks = tasks.values_list("pk", flat=True)
+        if not pks:
+            return None
+        return tasks.get(pk=random_choice(pks))
+
 
 class Cell(models.Model):
     x = models.IntegerField()
@@ -124,17 +131,8 @@ class Task(models.Model):
     description = models.CharField(max_length=1000)
     archived = models.BooleanField(default=False)
     category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True, blank=True
+        Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="tasks"
     )
-
-    @classmethod
-    def get_random_task(cls, max_difficulty):
-        pks = cls.objects.filter(
-            difficulty__lte=max_difficulty, archived=False
-        ).values_list("pk", flat=True)
-        if not pks:
-            return None
-        return cls.objects.get(pk=random_choice(pks))
 
 
 class Maze(models.Model):
@@ -192,9 +190,9 @@ class Maze(models.Model):
         self.end_y = self.height - 1
 
     def set_next_task(self):
-        if not self.task_difficulty:
+        if not self.task_difficulty or not self.category:
             return
-        self.next_task = Task.get_random_task(self.task_difficulty)
+        self.next_task = self.category.get_random_task(self.task_difficulty)
         self.save()
 
     def get_absolute_url(self):
