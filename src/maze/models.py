@@ -163,10 +163,6 @@ class Maze(models.Model):
     def __str__(self):
         return f"{self.id}: {self.title}"
 
-    @classmethod
-    def can_create_own_maze(cls, user):
-        return not cls.objects.filter(users=user, finished=False).exists()
-
     def generate_cells(self):
         maze_gen = MazeGenerator()
         maze_gen.generator = Prims(self.height, self.width)

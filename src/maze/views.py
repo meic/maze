@@ -28,7 +28,7 @@ class MyMazeCreateView(LoginRequiredMixin, FormView):
     extra_context = {"title": "Create Maze"}
 
     def form_valid(self, form):
-        if not Maze.can_create_own_maze(self.request.user):
+        if not self.request.user.is_authenticated:
             raise PermissionDenied
         form.save(self.request.user)
         return super().form_valid(form)
@@ -83,13 +83,11 @@ def index(request):
 
     user_mazes = []
     show_user_mazes = False
-    can_create_maze = False
     if request.user.is_authenticated:
         user_mazes = Maze.objects.filter(users=request.user).order_by("-last_updated")
         show_user_mazes = user_mazes.exists()
-        can_create_maze = Maze.can_create_own_maze(request.user)
     context = {
-        "can_create_maze": can_create_maze,
+        "can_create_maze": request.user.is_authenticated,
         "maze_rows": zip_longest(*[iter(all_maze_page)] * 3),
         "show_user_mazes": show_user_mazes,
         "user_maze_rows": zip_longest(*[iter(user_mazes)] * 3),
