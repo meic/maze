@@ -116,7 +116,10 @@ def maze(request, maze_id, clear=False):
     all_steps = maze.step_set.all().order_by("-timestamp")
     step_paginator = Paginator(all_steps, 5)
     page_number = request.GET.get("page", 1)
-    step_page = step_paginator.page(page_number)
+    try:
+        step_page = step_paginator.page(page_number)
+    except EmptyPage:
+        raise Http404
 
     context = {
         "form": form,
