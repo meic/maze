@@ -108,10 +108,11 @@ class StepForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        direction = cleaned_data["direction"]
-        direction_authority = Directions.meta[direction]["authority"]
-        if hasattr(Directions, f"validate_move_{direction_authority}"):
-            getattr(Directions, f"validate_move_{direction_authority}")(cleaned_data)
+        direction = cleaned_data.get("direction")
+        if direction:
+            direction_authority = Directions.meta[direction]["authority"]
+            if hasattr(Directions, f"validate_move_{direction_authority}"):
+                getattr(Directions, f"validate_move_{direction_authority}")(cleaned_data)
 
     def clean_direction(self):
         direction = self.cleaned_data["direction"]
