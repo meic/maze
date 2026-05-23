@@ -8,12 +8,35 @@ from crispy_forms.layout import Submit
 from .models import Category, Directions, Maze, Step, Task
 
 
+class Select2Multiple(forms.SelectMultiple):
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        attrs = super().build_attrs(base_attrs, extra_attrs)
+        classes = attrs.get("class", "")
+        if classes:
+            attrs["class"] = f"{classes} select2"
+        else:
+            attrs["class"] = "select2"
+        return attrs
+
+    class Media:
+        css = {
+            "all": (
+                "maze/css/select2.min.css",
+                "maze/css/select2-bootstrap-5-theme.min.css",
+            )
+        }
+        js = (
+            "maze/js/select2.min.js",
+            "maze/js/select2-init.js",
+        )
+
+
 class MazeCreateForm(forms.ModelForm):
     class Meta:
         model = Maze
         fields = ["title", "height", "width", "users", "task_difficulty", "category"]
         widgets = {
-            "users": forms.SelectMultiple(),
+            "users": Select2Multiple(),
         }
 
     def __init__(self, *args, **kwargs):
