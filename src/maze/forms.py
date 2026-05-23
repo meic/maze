@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from easy_select2 import Select2Multiple
 
 from .models import Category, Directions, Maze, Step, Task
 
@@ -14,7 +13,7 @@ class MazeCreateForm(forms.ModelForm):
         model = Maze
         fields = ["title", "height", "width", "users", "task_difficulty", "category"]
         widgets = {
-            "users": Select2Multiple(select2attrs={"width": "100%"}),
+            "users": forms.SelectMultiple(),
         }
 
     def __init__(self, *args, **kwargs):
