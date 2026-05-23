@@ -8,7 +8,9 @@ from django.http import Http404, JsonResponse, HttpResponseRedirect
 from django.views.generic.edit import CreateView, FormView
 from django.urls import reverse_lazy
 
-from .models import Maze
+from django.db.models import Sum
+
+from .models import Maze, Step
 from .forms import MazeCreateForm, MyMazeCreateForm, StepForm
 
 
@@ -81,11 +83,28 @@ def index(request):
         raise Http404
     add_pagination_links(all_maze_page, current_params=current_params)
 
+    # Calculate statistics
+    total_books = Step.objects.count()
+    total_pages = Step.objects.aggregate(total_pages=Sum("pages"))["total_pages"] or 0
+    total_mazes_complete = Maze.objects.filter(finished=True).count()
+    total_active_mazes = Maze.objects.filter(finished=False).count()
+
+    user_books = 0
+    user_pages = 0
+    user_mazes_complete = 0
+    user_active_mazes = 0
+
     user_mazes = []
     show_user_mazes = False
     if request.user.is_authenticated:
         user_mazes = Maze.objects.filter(users=request.user).order_by("-last_updated")
         show_user_mazes = user_mazes.exists()
+        
+        user_books = Step.objects.filter(user=request.user).count()
+        user_pages = Step.objects.filter(user=request.user).aggregate(total_pages=Sum("pages"))["total_pages"] or 0
+        user_mazes_complete = Maze.objects.filter(users=request.user, finished=True).count()
+        user_active_mazes = Maze.objects.filter(users=request.user, finished=False).count()
+
     context = {
         "can_create_maze": request.user.is_authenticated,
         "maze_rows": zip_longest(*[iter(all_maze_page)] * 3),
@@ -93,6 +112,14 @@ def index(request):
         "user_maze_rows": zip_longest(*[iter(user_mazes)] * 3),
         "search_term": search_term,
         "all_maze_page": all_maze_page,
+        "total_books": total_books,
+        "total_pages": total_pages,
+        "total_mazes_complete": total_mazes_complete,
+        "total_active_mazes": total_active_mazes,
+        "user_books": user_books,
+        "user_pages": user_pages,
+        "user_mazes_complete": user_mazes_complete,
+        "user_active_mazes": user_active_mazes,
     }
     return render(request, "maze/index.html", context)
 

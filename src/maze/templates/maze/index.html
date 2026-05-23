@@ -2,6 +2,66 @@
 
 {% block content %}
 
+<div class="stats-container mb-4">
+    <div class="stats-grid">
+        <!-- Card 1: Books Read -->
+        <div class="stat-card">
+            <div class="stat-icon-wrapper">
+                <i class="bi bi-book"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_books }}</span>
+                <span class="stat-label">Books Read</span>
+                {% if request.user.is_authenticated %}
+                    <span class="stat-personal">{{ user_books }} by you</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Card 2: Pages Read -->
+        <div class="stat-card">
+            <div class="stat-icon-wrapper">
+                <i class="bi bi-journal-bookmark"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_pages }}</span>
+                <span class="stat-label">Pages Read</span>
+                {% if request.user.is_authenticated %}
+                    <span class="stat-personal">{{ user_pages }} by you</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Card 3: Mazes Completed -->
+        <div class="stat-card">
+            <div class="stat-icon-wrapper">
+                <i class="bi bi-trophy"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_mazes_complete }}</span>
+                <span class="stat-label">Completed Mazes</span>
+                {% if request.user.is_authenticated %}
+                    <span class="stat-personal">{{ user_mazes_complete }} by you</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Card 4: Active Mazes -->
+        <div class="stat-card">
+            <div class="stat-icon-wrapper">
+                <i class="bi bi-compass"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_active_mazes }}</span>
+                <span class="stat-label">Active Mazes</span>
+                {% if request.user.is_authenticated %}
+                    <span class="stat-personal">{{ user_active_mazes }} by you</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 {% if can_create_maze %}
     <div class="row mb-3">
         <div class="col text-center">
