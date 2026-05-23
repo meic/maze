@@ -5,56 +5,102 @@
 {% block title %}The Maze Game: {{maze.title}}{% endblock %}
 
 {% block content %}
-<h2>Maze: {{maze.title}}</h2>
+<h2 class="maze-detail-title">Maze: {{maze.title}}</h2>
+
 {% if maze.finished %}
-<h3>Congratulation! You have completed the maze!</h3>
+    <div class="alert alert-success mb-4">
+        <i class="bi bi-emoji-sunglasses-fill me-2"></i> <strong>Congratulations!</strong> You have successfully completed the maze!
+    </div>
 {% endif %}
-<div class="maze-container" data-url="{{ajax_url}}"></div>
+
+<div class="maze-container mb-4" data-url="{{ajax_url}}"></div>
 
 {% if maze.next_task %}
-<div class="maze-task">
-    <p>Task: {{ maze.next_task.description }}</p>
-</div>
+    <div class="maze-task">
+        <i class="bi bi-compass-fill me-2"></i> <strong>Next Task:</strong> {{ maze.next_task.description }}
+    </div>
 {% endif %}
 
 {% if form %}
     <div class="maze-form-container">
+        <h4 class="mb-3"><i class="bi bi-signpost-split-fill me-2"></i>Choose Your Next Step</h4>
         {% crispy form %}
     </div>
 {% endif %}
+
 {% if not user.is_authenticated %}
-    <p>Please <a href="{% url "login" %}">login</a> to navigate the maze.</p>
+    <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle-fill me-2"></i> Please <a href="{% url "login" %}" class="alert-link">login</a> to navigate the maze.
+    </div>
 {% endif %}
 
-<h3>Steps:</h3>
+<h3 class="step-feed-title"><i class="bi bi-chat-left-text-fill me-2"></i>Activity Feed</h3>
 
 {% for step in step_page %}
     <div class="maze-step">
-        <p>{{ step.title }} by {{ step.author }} ({{ step.pages }} pages)</p>
-        <p>Read by: {{ step.reader }}</p>
-        <p>Added: {{ step.timestamp }}</p>
+        <div class="maze-step-header">
+            <span class="fw-bold text-primary"><i class="bi bi-person-fill me-1"></i> {{ step.reader }}</span>
+            <span class="text-muted"><i class="bi bi-clock me-1"></i> {{ step.timestamp|date:"M d, Y H:i" }}</span>
+        </div>
+        <div class="maze-step-title">
+            {{ step.title }} <span class="fw-normal text-muted">by {{ step.author }} ({{ step.pages }} pages)</span>
+        </div>
         {% if step.task %}
-            <p>Task: {{ step.task.description }}</p>
+            <div class="maze-step-task">
+                <i class="bi bi-compass"></i> Task: {{ step.task.description }}
+            </div>
         {% endif %}
     </div>
 {% endfor %}
 
-<div class="pagination">
-    <span class="pagination-links">
+<nav aria-label="Step navigation" class="pagination-container">
+    <ul class="pagination">
         {% if step_page.has_previous %}
-            <a href="?page=1">&laquo; First</a>
-            <a href="?page={{ step_page.previous_page_number }}">Previous</a>
+            <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="First">
+                    <span aria-hidden="true">&laquo;&laquo; First</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ step_page.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&lsaquo; Prev</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;&laquo; First</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">&lsaquo; Prev</span>
+            </li>
         {% endif %}
 
-        <span class="current">
-            Page {{ step_page.number }} of {{ step_page.paginator.num_pages }}.
-        </span>
+        <li class="page-item active">
+            <span class="page-link">
+                Page {{ step_page.number }} of {{ step_page.paginator.num_pages }}
+            </span>
+        </li>
 
         {% if step_page.has_next %}
-            <a href="?page={{ step_page.next_page_number }}">Next</a>
-            <a href="?page={{ step_page.paginator.num_pages }}">Last &raquo;</a>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ step_page.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">Next &rsaquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ step_page.paginator.num_pages }}" aria-label="Last">
+                    <span aria-hidden="true">Last &raquo;&raquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next &rsaquo;</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">Last &raquo;&raquo;</span>
+            </li>
         {% endif %}
-    </span>
-</div>
+    </ul>
+</nav>
 
 {% endblock %}

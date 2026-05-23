@@ -3,18 +3,28 @@
         <div class="row mb-4">
             {% for maze in row %}
                 {% if maze %}
-                    <div class="col-lg-4">
-                        <a href="{{ maze.get_absolute_url }}">
-                            <h4 class="maze-title {% if maze.finished %}maze-complete{% endif %}">
-                                {{ maze.title }}
-                                {% if maze.finished %}
-                                    <i class="bi bi-emoji-sunglasses"></i>
-                                {% endif %}
-                            </h4>
-                            <div
-                                class="maze-container maze-small"
-                                data-url="{{ maze.get_ajax_url }}"
-                            ></div>
+                    <div class="col-lg-4 mb-4">
+                        <a href="{{ maze.get_absolute_url }}" class="maze-card-link">
+                            <div class="maze-card">
+                                <h4 class="maze-title">
+                                    {{ maze.title }}
+                                </h4>
+                                <div
+                                    class="maze-container maze-small"
+                                    data-url="{{ maze.get_ajax_url }}"
+                                ></div>
+                                <div class="mt-2 text-center">
+                                    {% if maze.finished %}
+                                        <span class="maze-badge maze-badge-complete">
+                                            <i class="bi bi-check-circle-fill"></i> Completed
+                                        </span>
+                                    {% else %}
+                                        <span class="maze-badge maze-badge-active">
+                                            <i class="bi bi-arrow-right-circle-fill"></i> Active
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </a>
                     </div>
                 {% endif %}

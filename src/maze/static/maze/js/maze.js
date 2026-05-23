@@ -33,13 +33,14 @@ function create_maze(container) {
         var ctx = canvas.get(0).getContext('2d');
         ctx.lineWidth = 6;
         ctx.lineCap = "square";
+        ctx.strokeStyle = '#334155'; // Slate-700 walls
         ctx.beginPath();
         ctx.translate(x_trans, y_trans);
         $.each(data.cells, function (i, cell) {
             if (!cell.seen) {
-                ctx.fillStyle = 'grey';
-                // Square is 1px larger in all directions to avoid pixel interpolation when with of
-                // maze is not a integer multiple of the width or height
+                ctx.fillStyle = '#e2e8f0'; // Soft Slate-200 overlay
+                // Square is 1px larger in all directions to avoid pixel interpolation when width of
+                // maze is not an integer multiple of the width or height
                 ctx.fillRect(cell.x*cell_width-1, cell.y*cell_height-1, cell_width+2, cell_height+2);
             }
         });
@@ -110,8 +111,8 @@ function create_maze(container) {
             ctx.fill(p);
         }
 
-        add_svg(data.current_x, data.current_y, WALKING_SVG, "green", 0.75)
-        add_svg(data.end_x, data.end_y, BOOK_SVG, "purple", 0.6)
+        add_svg(data.current_x, data.current_y, WALKING_SVG, "#059669", 0.75) // Emerald walker
+        add_svg(data.end_x, data.end_y, BOOK_SVG, "#4f46e5", 0.6) // Indigo goal book
 
     }
 
