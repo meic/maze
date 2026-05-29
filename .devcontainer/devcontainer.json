@@ -1,0 +1,20 @@
+{
+    "name": "Django Dev Container (Stacked)",
+    // 1. Tell the IDE to load BOTH files in order, exactly like your CLI command
+    "dockerComposeFile": [
+        "../docker-compose.yml",
+        "../docker-compose.dev.yml"
+    ],
+    // 2. Explicitly target the service you want to open the IDE inside of
+    "service": "web",
+    "workspaceFolder": "/code",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "batisteo.vscode-django"
+            ]
+        }
+    }
+}

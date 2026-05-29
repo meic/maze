@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  db:
+    volumes:
+      - ./dev_db_data:/var/lib/postgresql/data
+
+  web:
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      DEBUG: "True"
+
+  tunnel:
+    # Scale Cloudflared tunnel to 0 in development since it is not needed locally
+    deploy:
+      replicas: 0
