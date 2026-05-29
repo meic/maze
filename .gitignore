@@ -12,3 +12,4 @@ src/notebooks/
 src/staticfiles/
 db.sqlite3
 dev_db_data/
+.env
