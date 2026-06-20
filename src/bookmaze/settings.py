@@ -10,20 +10,58 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
-
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", "django-insecure-local-development-key-python3.14-upgrade"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "yes")
 
-ALLOWED_HOSTS = []
+# Allowed hosts parsed from environment or falling back to defaults
+allowed_hosts_env = os.environ.get("ALLOWED_HOSTS")
+if allowed_hosts_env:
+    ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(",") if host.strip()]
+else:
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost", "maze-dev.lan"]
+
+# CSRF Trusted Origins (needed for Django 4.0+ over HTTPS)
+csrf_trusted_origins_env = os.environ.get("CSRF_TRUSTED_ORIGINS")
+if csrf_trusted_origins_env:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_trusted_origins_env.split(",") if origin.strip()]
+else:
+    # Automatically infer secure and insecure origins from ALLOWED_HOSTS for non-IP hosts
+    CSRF_TRUSTED_ORIGINS = []
+    for host in ALLOWED_HOSTS:
+        host = host.strip()
+        if host and not host.replace(".", "").isdigit() and host not in ("localhost", "127.0.0.1"):
+            CSRF_TRUSTED_ORIGINS.append(f"https://{host}")
+            CSRF_TRUSTED_ORIGINS.append(f"http://{host}")
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_DB", "maze"),
+        "USER": os.environ.get("POSTGRES_USER", "maze_user"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "maze_password"),
+        "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
+    }
+}
+
+if "test" in sys.argv:
+    DATABASES["default"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+
 
 
 # Application definition
@@ -135,4 +173,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 SELECT2_USE_BUNDLED_JQUERY = False
 
-from bookmaze.local_settings import *  # noqa: F401, F403, E402
+try:
+    from bookmaze.local_settings import *  # noqa: F401, F403, E402
+except ImportError:
+    pass
